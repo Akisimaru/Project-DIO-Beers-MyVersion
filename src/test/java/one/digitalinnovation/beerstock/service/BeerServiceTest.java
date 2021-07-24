@@ -3,10 +3,7 @@ package one.digitalinnovation.beerstock.service;
 import one.digitalinnovation.beerstock.builder.BeerDTOBuilder;
 import one.digitalinnovation.beerstock.dto.BeerDTO;
 import one.digitalinnovation.beerstock.entity.Beer;
-import one.digitalinnovation.beerstock.exception.BeerAlreadyRegisteredException;
-import one.digitalinnovation.beerstock.exception.BeerNotFoundException;
-import one.digitalinnovation.beerstock.exception.BeerStockExceededException;
-import one.digitalinnovation.beerstock.exception.BeerStockReceededException;
+import one.digitalinnovation.beerstock.exception.*;
 import one.digitalinnovation.beerstock.mapper.BeerMapper;
 import one.digitalinnovation.beerstock.repository.BeerRepository;
 import org.junit.jupiter.api.Test;
@@ -15,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +36,7 @@ public class BeerServiceTest {
     private BeerService beerService;
 
     @Test
-    void whenBeerInformedThenItShouldBeCreated() throws BeerAlreadyRegisteredException {
+    void whenBeerInformedThenItShouldBeCreated() throws BeerAlreadyRegisteredException, FabricationDateIsInTheFuture {
         // given
         BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
         Beer expectedSavedBeer = beerMapper.toModel(expectedBeerDTO);
@@ -241,4 +239,17 @@ public class BeerServiceTest {
 
         assertThrows(BeerNotFoundException.class, () -> beerService.decrement(INVALID_BEER_ID, quantityToDecrement));
     }
+
+//    @Test
+//    void whenLocalDateIsBeforeTodayThenThrowException() {
+//        BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+//        Beer expectedBeer = beerMapper.toModel(expectedBeerDTO);
+//
+//        when(beerRepository.findById(expectedBeerDTO.getId())).thenReturn(Optional.of(expectedBeer));
+//
+//        int quantityToDecrement = 1;
+//        assertThrows(BeerStockExceededException.class, () -> beerService.
+//    }
+
+
 }

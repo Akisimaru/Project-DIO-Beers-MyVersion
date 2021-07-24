@@ -43,6 +43,4 @@ public class Beer {
     private BeerStrength strength;
 
 
-
-
 }

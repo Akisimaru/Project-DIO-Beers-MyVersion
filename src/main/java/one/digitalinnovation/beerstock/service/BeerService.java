@@ -3,15 +3,14 @@ package one.digitalinnovation.beerstock.service;
 import lombok.AllArgsConstructor;
 import one.digitalinnovation.beerstock.dto.BeerDTO;
 import one.digitalinnovation.beerstock.entity.Beer;
-import one.digitalinnovation.beerstock.exception.BeerAlreadyRegisteredException;
-import one.digitalinnovation.beerstock.exception.BeerNotFoundException;
-import one.digitalinnovation.beerstock.exception.BeerStockExceededException;
-import one.digitalinnovation.beerstock.exception.BeerStockReceededException;
+import one.digitalinnovation.beerstock.exception.*;
 import one.digitalinnovation.beerstock.mapper.BeerMapper;
 import one.digitalinnovation.beerstock.repository.BeerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,8 +22,11 @@ public class BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper = BeerMapper.INSTANCE;
 
-    public BeerDTO createBeer(BeerDTO beerDTO) throws BeerAlreadyRegisteredException {
+    public BeerDTO createBeer(BeerDTO beerDTO) throws BeerAlreadyRegisteredException, FabricationDateIsInTheFuture {
         verifyIfIsAlreadyRegistered(beerDTO.getName());
+
+        verifyIfDateIsBeforeNow(beerDTO.getId(), beerDTO.getFabricationDate(), LocalDate.now());
+
         Beer beer = beerMapper.toModel(beerDTO);
         Beer savedBeer = beerRepository.save(beer);
         return beerMapper.toDTO(savedBeer);
@@ -80,5 +82,14 @@ public class BeerService {
             return beerMapper.toDTO(decrementedBeerStock);
         }
         throw new BeerStockReceededException(id, quantityToDecrement);
+    }
+
+    public void verifyIfDateIsBeforeNow(Long id, String date, LocalDate Today) throws FabricationDateIsInTheFuture {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        if (Today.isBefore(localDate)) {
+            throw new FabricationDateIsInTheFuture(id);
+        }
     }
 }
