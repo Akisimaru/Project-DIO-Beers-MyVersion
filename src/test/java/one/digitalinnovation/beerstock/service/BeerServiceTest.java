@@ -240,16 +240,17 @@ public class BeerServiceTest {
         assertThrows(BeerNotFoundException.class, () -> beerService.decrement(INVALID_BEER_ID, quantityToDecrement));
     }
 
-//    @Test
-//    void whenLocalDateIsBeforeTodayThenThrowException() {
-//        BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
-//        Beer expectedBeer = beerMapper.toModel(expectedBeerDTO);
-//
-//        when(beerRepository.findById(expectedBeerDTO.getId())).thenReturn(Optional.of(expectedBeer));
-//
-//        int quantityToDecrement = 1;
-//        assertThrows(BeerStockExceededException.class, () -> beerService.
-//    }
+    @Test
+    void whenLocalDateIsBeforeTodayThenThrowException() {
+        BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        Beer expectedBeer = beerMapper.toModel(expectedBeerDTO);
+
+        LocalDate today = LocalDate.now();
+
+        if (expectedBeer.getFabricationDate().isAfter(today))
+        assertThrows(FabricationDateIsInTheFuture.class, () -> beerService.verifyIfDateIsBeforeNow(expectedBeerDTO.getId(), expectedBeerDTO.getFabricationDate(), today));
+
+    }
 
 
 }

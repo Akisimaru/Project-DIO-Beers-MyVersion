@@ -29,7 +29,7 @@ public class BeerDTOBuilder {
     private BeerType type = BeerType.LAGER;
 
     @Builder.Default
-    private String fabricationDate = "1-12-2010";
+    private String fabricationDate = "11-12-2010";
 
     @Builder.Default
     private BeerStrength strength = BeerStrength.STRONG;
